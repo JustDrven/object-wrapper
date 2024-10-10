@@ -2,13 +2,16 @@ package dev.justdrven.objectstorage;
 
 import dev.justdrven.objectstorage.type.DataBoolean;
 import dev.justdrven.objectstorage.type.DataFloat;
+
 import dev.justdrven.objectstorage.type.DataString;
 import dev.justdrven.objectstorage.util.Tests;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,13 +22,17 @@ class ObjectWrapperTest {
 
     @BeforeEach
     void setUp() {
+        System.out.println("'" + Tests.test() + "' is starting..");
+        Tests.count();
+
         try {
             File file = Paths.get(
-                    getClass().getClassLoader().getResource("data.ow").toURI()
+                    Objects.requireNonNull(getClass().getClassLoader().getResource("data.ow")).toURI()
             ).toFile();
 
             this.objectWrapper = new ObjectWrapper(file);
         } catch (Exception e) {
+            System.out.println("Error with initialization of ObjectWrapper");
             e.printStackTrace();
         }
 
@@ -33,6 +40,7 @@ class ObjectWrapperTest {
     }
 
     @Test
+    @DisplayName("Read Data")
     void readData() {
         objectWrapper.putData(new DataString(Tests.test(), msg));
         objectWrapper.save();
@@ -42,10 +50,10 @@ class ObjectWrapperTest {
         assertNotNull(expected);
         assertEquals(expected.get(), msg);
 
-        Tests.count();
     }
 
     @Test
+    @DisplayName("Get Data")
     void get() {
         String test1 = Tests.test();
         objectWrapper.putData(new DataString(test1, msg));
@@ -71,6 +79,16 @@ class ObjectWrapperTest {
     }
 
     @Test
+    @DisplayName("Is empty")
+    void isEmpty() {
+        objectWrapper.putData(new DataFloat(Tests.test(), 39f));
+        objectWrapper.clear();
+
+        assertTrue(objectWrapper.isEmpty());
+    }
+
+    @Test
+    @DisplayName("Size of data")
     void size() {
         objectWrapper.putData(new DataString(Tests.test(), msg));
         Tests.count();
