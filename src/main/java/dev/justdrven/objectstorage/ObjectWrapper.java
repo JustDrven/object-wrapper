@@ -4,61 +4,65 @@ import dev.justdrven.objectstorage.exception.DataNotFoundException;
 import dev.justdrven.objectstorage.type.Data;
 
 import java.io.*;
-import java.nio.file.Files;
 import java.util.HashSet;
 import java.util.Set;
 
 public class ObjectWrapper {
 
     private final Set<Data<?>> map = new HashSet<>();
+    private final File file;
 
-    private final ObjectInputStream input;
-    private final ObjectOutputStream output;
-
-    public ObjectWrapper(InputStream input, OutputStream output) {
-        this.input = (ObjectInputStream)input;
-        this.output = (ObjectOutputStream)output;
-    }
-
-    public ObjectWrapper(File file) throws IOException {
-        this(Files.newInputStream(file.toPath()), Files.newOutputStream(file.toPath()));
+    public ObjectWrapper(File file) {
+        this.file = file;
     }
 
     public final void putData(Data<?> data) {
-        if (contains(data.getId()))return;
-
         map.add(data);
     }
 
     public final boolean contains(String id) {
-        return map.stream()
-                .anyMatch(data -> data.getId().equals(id));
+        for (Data<?> data : map) {
+            if (data.getId().equals(id)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
-    public final Data<?> read(String id) {
-        return readFromFile().stream()
-                .filter(data -> data.getId().equals(id))
+    public int size() {
+        return readFromFile().size();
+    }
+
+    public final <T extends Data<?>> T readData(String id) {
+        Set<Data> data = readFromFile();
+        return ((T)data.stream()
+                .filter(d -> d.getId().equals(id))
                 .findFirst()
-                .orElseThrow(() -> new DataNotFoundException(id));
+                .orElseThrow(() -> new DataNotFoundException(id)));
     }
 
-    private Set<Data<?>> readFromFile() {
-        try {
-            return (Set<Data<?>>)input.readObject();
+    public final void clear() {
+        if (map.isEmpty())return;
+
+        map.clear();
+    }
+
+    private <T extends Data<?>> Set<T> readFromFile() {
+        try(ObjectInputStream input = new ObjectInputStream(new FileInputStream(file))) {
+            return (Set<T>) input.readObject();
         } catch (Exception e) {
             throw new RuntimeException("Input cannot be " + e.getMessage());
         }
     }
 
     public final void save() {
-        try {
+        try (ObjectOutputStream output = new ObjectOutputStream(new FileOutputStream(file))){
             output.writeObject(map);
 
-            output.close();
+            output.flush();
         } catch (IOException e) {
             throw new RuntimeException("Output cannot be " + e.getMessage());
         }
     }
-
-
 }

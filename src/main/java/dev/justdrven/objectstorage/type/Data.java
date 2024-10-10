@@ -5,7 +5,7 @@ import java.io.Serializable;
 public class Data<T> implements Serializable {
 
     private final String id;
-    public final T type;
+    private final T type;
 
     public Data(String id, T type) {
         this.id = id;

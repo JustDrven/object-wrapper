@@ -1,7 +1,7 @@
 package dev.justdrven.objectstorage.type;
 
 public class DataString extends Data<String> {
-    public DataString(String type) {
-        super(type);
+    public DataString(String id, String type) {
+        super(id, type);
     }
 }
