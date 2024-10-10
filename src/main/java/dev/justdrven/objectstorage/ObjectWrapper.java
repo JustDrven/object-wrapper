@@ -7,6 +7,7 @@ import java.io.*;
 import java.util.HashSet;
 import java.util.Set;
 
+@SuppressWarnings("unchecked")
 public class ObjectWrapper {
 
     private final Set<Data<?>> map = new HashSet<>();
@@ -35,7 +36,7 @@ public class ObjectWrapper {
     }
 
     public final <T extends Data<?>> T readData(String id) {
-        Set<Data> data = readFromFile();
+        Set<Data<?>> data = readFromFile();
         return ((T)data.stream()
                 .filter(d -> d.getId().equals(id))
                 .findFirst()
@@ -48,9 +49,9 @@ public class ObjectWrapper {
         map.clear();
     }
 
-    private <T extends Data<?>> Set<T> readFromFile() {
+    private Set<Data<?>> readFromFile() {
         try(ObjectInputStream input = new ObjectInputStream(new FileInputStream(file))) {
-            return (Set<T>) input.readObject();
+            return (Set<Data<?>>) input.readObject();
         } catch (Exception e) {
             throw new RuntimeException("Input cannot be " + e.getMessage());
         }
