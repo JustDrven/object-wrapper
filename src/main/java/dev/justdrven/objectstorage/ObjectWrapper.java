@@ -14,6 +14,9 @@ public class ObjectWrapper {
     private final File file;
 
     public ObjectWrapper(File file) {
+        if (file == null || !file.exists()) {
+            throw new RuntimeException("File cannot be null!");
+        }
         this.file = file;
     }
 
@@ -47,6 +50,10 @@ public class ObjectWrapper {
         if (map.isEmpty())return;
 
         map.clear();
+    }
+
+    public final boolean isEmpty() {
+        return readFromFile().isEmpty() || map.isEmpty();
     }
 
     private Set<Data<?>> readFromFile() {
