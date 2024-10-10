@@ -10,13 +10,17 @@ ObjectWrapper objectWrapper = new ObjectWrapper(File);
 objectWrapper.putData(new DataString("test", "this is test"));
 objectWrapper.putData(new DataInt("testId", 10));
 
-
 // Save all data to file
 objectWrapper.save();
 
 // Returns data by id
 DataString test = objectWrapper.readData("test");
 DataInt testId = objectWrapper.readData("testId");
+
+// Returns data type
+String testToString = test.get();
+int testIdToInt = testId.get();
+
 ```
 
 ### Types of data:
