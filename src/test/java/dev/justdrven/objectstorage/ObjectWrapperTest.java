@@ -46,6 +46,31 @@ class ObjectWrapperTest {
     }
 
     @Test
+    void get() {
+        String test1 = Tests.test();
+        objectWrapper.putData(new DataString(test1, msg));
+
+        Tests.count();
+        String test2 = Tests.test();
+        objectWrapper.putData(new DataBoolean(test2, false));
+
+        Tests.count();
+        String test3 = Tests.test();
+        objectWrapper.putData(new DataFloat(test3, 1f));
+
+        objectWrapper.save();
+
+        DataString dataString = objectWrapper.readData(test1);
+        assertEquals(msg, dataString.get());
+
+        DataBoolean dataBoolean = objectWrapper.readData(test2);
+        assertFalse(dataBoolean.get());
+
+        DataFloat dataFloat = objectWrapper.readData(test3);
+        assertEquals(1f, dataFloat.get());
+    }
+
+    @Test
     void size() {
         objectWrapper.putData(new DataString(Tests.test(), msg));
         Tests.count();
