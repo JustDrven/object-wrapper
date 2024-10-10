@@ -6,8 +6,9 @@ import dev.justdrven.objectstorage.type.DataFloat;
 import dev.justdrven.objectstorage.type.DataString;
 import dev.justdrven.objectstorage.util.Tests;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.DisplayName;
 
 import java.io.*;
 import java.nio.file.Paths;
@@ -17,13 +18,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ObjectWrapperTest {
 
+    private int count = 1;
     private final String msg = "this is test message";
     private ObjectWrapper objectWrapper;
 
     @BeforeEach
     void setUp() {
-        System.out.println("'" + Tests.test() + "' is starting..");
-        Tests.count();
+        System.out.println("'Test-" + count + "' is starting..");
 
         try {
             File file = Paths.get(
@@ -37,10 +38,16 @@ class ObjectWrapperTest {
         }
 
         assertNotNull(objectWrapper);
+        count++;
+    }
+
+    @AfterEach
+    void end() {
+        System.out.println("'Test-" + count + "' was successfully!");
     }
 
     @Test
-    @DisplayName("Read Data")
+    @DisplayName("Read data")
     void readData() {
         objectWrapper.putData(new DataString(Tests.test(), msg));
         objectWrapper.save();
@@ -53,7 +60,7 @@ class ObjectWrapperTest {
     }
 
     @Test
-    @DisplayName("Get Data")
+    @DisplayName("Get data")
     void get() {
         String test1 = Tests.test();
         objectWrapper.putData(new DataString(test1, msg));
